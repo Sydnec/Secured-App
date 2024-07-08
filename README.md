@@ -32,25 +32,25 @@ The task can be implemented in almost any operating system. For example, Unix- a
 
 In order to be eligible for any points, the application must, at the very least, work locally for the interactive (non-network) user.
 
-The user physically sitting at the computer must be able to request the time in a format specified by him/her. It’s not sufficient to provide a selection of formats, the user must be able to create their own – even a nonsensical one.
-The user physically sitting at the computer must be able to set the system time.
-A network user may not be able to set the system time.
-CAUTION! Anybody who uses a network interface to interact with the application is considered a network user, regardless of their actual location or the IP address used (e.g. localhost)!
-The application must be split into at least two parts:
-The regular part (SH) must run with the privileges of a regular user (or lower).
-All privileged tasks must be done through a separate application (NC).
-SH will ensure the privileged start of NC; to simplify matters, it’s OK to just run NC as root or Administrator.
-NC is only allowed to perform the minimum amount of work and then it must terminate immediately, to minimize the attack vectors. In particular, it is forbidden to leave NC running over prolonged periods of time or to run any other processes from it – functions such as system, fork, exec, ShellExecute and similar are prohibited.
-NC may not interact with the user in any way.
+- The user physically sitting at the computer must be able to request the time in a format specified by him/her. It’s not sufficient to provide a selection of formats, the user must be able to create their own – even a nonsensical one.
+- The user physically sitting at the computer must be able to set the system time.
+- A network user may not be able to set the system time.
+  - CAUTION! Anybody who uses a network interface to interact with the application is considered a network user, regardless of their actual location or the IP address used (e.g. localhost)!
+- The application must be split into at least two parts:
+  - The regular part (SH) must run with the privileges of a regular user (or lower).
+  - All privileged tasks must be done through a separate application (NC).
+  - SH will ensure the privileged start of NC; to simplify matters, it’s OK to just run NC as root or Administrator.
+  - NC is only allowed to perform the minimum amount of work and then it must terminate immediately, to minimize the attack vectors. In particular, it is forbidden to leave NC running over prolonged periods of time or to run any other processes from it – functions such as system, fork, exec, ShellExecute and similar are prohibited.
+  - NC may not interact with the user in any way.
 For completing all of these requirements you will get up to [10 points].
 
 ### Full solution
 
 The full solution must satisfy all the requirements of the basic solution, plus these:
 
-In all applications, give up all privileges you don’t need. If you kept any provileges, explain what do you need them for. [4 points]
-In all applications, subscribe to Data Execution Prevention (in case the operating system is configured in the "OptIn" mode), or provide a reliable documentation that shows that you don’t need to do that. [2 points]
-The SH application will allow remote users to connect and request the current date/time. We assume a "stupid" client, that is, a string containing the formatted date/time will be transferred rather than a binary representation to be formatted by the client. [2 points]
-The remote users may not set the time, but they may specify their own format string for the display of the current time. The creation of the string is up to them, a choice from several options is not sufficient. [2 points]
-Within one session, the user should be able to ask for multiple formattings. [3 points]
-The TCP port used by SH will be configured through a configuration file or a registry key. Explain your choice of location, including the ACLs for it. [2 points]
+- In all applications, give up all privileges you don’t need. If you kept any provileges, explain what do you need them for. [4 points]
+- In all applications, subscribe to Data Execution Prevention (in case the operating system is configured in the "OptIn" mode), or provide a reliable documentation that shows that you don’t need to do that. [2 points]
+- The SH application will allow remote users to connect and request the current date/time. We assume a "stupid" client, that is, a string containing the formatted date/time will be transferred rather than a binary representation to be formatted by the client. [2 points]
+- The remote users may not set the time, but they may specify their own format string for the display of the current time. The creation of the string is up to them, a choice from several options is not sufficient. [2 points]
+- Within one session, the user should be able to ask for multiple formattings. [3 points]
+- The TCP port used by SH will be configured through a configuration file or a registry key. Explain your choice of location, including the ACLs for it. [2 points]
