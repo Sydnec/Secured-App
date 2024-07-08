@@ -1,10 +1,10 @@
-# 1. Semestral Project
+# 1. Semestral Project
 
-## Introduction
+## Introduction
 
 In this tutorial we will introduce the grading scheme of the course and then discuss the semestral project that students are required to complete to pass the course. The project is selected so that it will enable us to understand the system of security tokens and the User Account Control (UAC) in Windows and to learn how to give-up all unnecessary privileges. Students will also experiment with privilege separation by extracting any high-privileged tasks (e.g. the setting of system time) into a separate process.
 
-## Description
+## Description
 
 We will be developing a Network Clock (NC) application with the following characteristics:
 
@@ -14,7 +14,7 @@ The interactive user (but not a remote one) may also set the date/time.
 Note that since the application is accessible from the internet, there are many potential attackers waiting to exploit any bug. For this reason, the application should be written with security in mind; particularly, it will use as low privileges as possible.
 There is no requirement on the programming language used. It may be beneficial to use a high level language, as a high level language will take care of many of the security issues for you (e.g. most of the buffer overflows, format string abuse etc.). A language with advanced GUI support will also simplify the input validation, because the UI components will handle that. On the other hand, many high-level languages make it difficult to communicate with the operating system’s API, e.g. for the purpose of removing unnecessary privileges.
 
-## Instructions
+## Instructions
 
 Any network server code is a prime target for attackers, particularly if the communication protocol is complex and errors can be expected in it. We do not have a protocol specified, that’s up to the developer, but we do have a requirement that the user must be able to supply her own format string. That opens two potential vulnerabilities: Our protocol must be able to handle variable-length strings, which makes it prone to the buffer overflow, and these strings will be used for formatting, which may be used for format string exploitation. Both of these issues need to be addressed properly, otherwise our application won’t be secure. Note that your protocol should be able to deal with split requests (one command is split into multiple TCP packets, e.g. due to the poor quality of the connection used by the user) as well as combined requests (multiple commands got concatenated into a single packet).
 
@@ -26,9 +26,9 @@ Setting system time on Windows is a privileged operation, and our application ne
 
 The task can be implemented in almost any operating system. For example, Unix- and Linux-based systems were designed with the possibility of running different applications under different user systems in mind, and support various more-or-less automatic techniques of selecting the right user account (e.g. using the SUID bit or the SU tool). In newer versions, the concept of Capabilities was introduced, which provides the ability to specify the privileges of a process in a great detail.
 
-## Grading system
+## Grading system
 
-### Basic solution
+### Basic solution
 
 In order to be eligible for any points, the application must, at the very least, work locally for the interactive (non-network) user.
 
@@ -44,7 +44,7 @@ NC is only allowed to perform the minimum amount of work and then it must termin
 NC may not interact with the user in any way.
 For completing all of these requirements you will get up to [10 points].
 
-### Full solution
+### Full solution
 
 The full solution must satisfy all the requirements of the basic solution, plus these:
 
