@@ -1,0 +1,1 @@
+sudo systemsetup -setnetworktimeserver time.apple.com2
