@@ -26,12 +26,9 @@ class NetworkClockApp(tk.Tk):
         self.set_button.pack(pady=5)
     
     def update_display(self):
-        try:
-            now = datetime.datetime.now()
-            formatted_time = self.time_formatter.format_time(now, self.format_string.get())
-            self.label.config(text=formatted_time)
-        except Exception as e:
-            messagebox.showerror("Error", f"Invalid format string: {e}")
+        now = datetime.datetime.now()
+        formatted_time = self.time_formatter.format_time(now, self.format_string.get())
+        self.label.config(text=formatted_time)
     
     def set_datetime(self):
         try:

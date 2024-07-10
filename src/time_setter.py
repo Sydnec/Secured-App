@@ -1,29 +1,27 @@
 import sys
 import subprocess
 import datetime
+from tkinter import messagebox
 
 class TimeSetter:
     @staticmethod
     def set_system_time(new_time_str):
         try:
             new_time = datetime.datetime.strptime(new_time_str, "%Y %m %d %H %M %S")
+            if sys.platform == "win32":
+                TimeSetter.set_system_time_win(new_time)
+            elif sys.platform.startswith("linux"):
+                TimeSetter.set_system_time_unix(new_time.strftime("%Y-%m-%d %H:%M:%S"))
+            elif sys.platform == "darwin":
+                TimeSetter.set_system_time_macos(new_time.strftime("%m%d%H%M%Y.%S"))
+            else:
+                messagebox.showerror(f"Platform '{sys.platform}' not supported for setting system time.")
+                raise NotImplementedError(f"Platform '{sys.platform}' not supported for setting system time.")
         except ValueError:
             messagebox.showerror("Error", "Invalid date/time format. Please use YYYY MM DD HH mm SS.")
 
-        if sys.platform == "win32":
-            new_system_time = (new_time.year, new_time.month, new_time.day, 
-                new_time.hour, new_time.minute, new_time.second, 
-                new_time.microsecond // 1000, -1)
-            TimeSetter.set_system_time_win(new_system_time)
-        elif sys.platform.startswith("linux"):
-            TimeSetter.set_system_time_unix(new_time.strftime("%Y-%m-%d %H:%M:%S"))
-        elif sys.platform == "darwin":
-            TimeSetter.set_system_time_macos(new_time.strftime("%m%d%H%M%Y.%S"))
-        else:
-            raise NotImplementedError(f"Platform '{sys.platform}' not supported for setting system time.")
-
     @staticmethod
-    def set_system_time_win(new_system_time):
+    def set_system_time_win(new_time):
         import ctypes
         
         class SYSTEMTIME(ctypes.Structure):
@@ -39,16 +37,15 @@ class TimeSetter:
             ]
 
         system_time = SYSTEMTIME(
-            wYear=new_system_time[0],
-            wMonth=new_system_time[1],
-            wDay=new_system_time[2],
-            wHour=new_system_time[3],
-            wMinute=new_system_time[4],
-            wSecond=new_system_time[5],
-            wMilliseconds=new_system_time[6],
+            wYear=new_time.year,
+            wMonth=new_time.month,
+            wDay=new_time.day,
+            wHour=new_time.hour,
+            wMinute=new_time.minute,
+            wSecond=new_time.second,
+            wMilliseconds=0,
         )
 
-        # Use the appropriate Windows API to set the system time
         result = ctypes.windll.kernel32.SetSystemTime(ctypes.byref(system_time))
         if not result:
             raise OSError("Failed to set system time")
