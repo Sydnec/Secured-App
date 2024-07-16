@@ -1,18 +1,18 @@
-import sys
+import platform
 import subprocess
 import datetime
+import sys
 from tkinter import messagebox
 
 class TimeSetter:
     @staticmethod
-    def set_system_time(new_time_str):
+    def set_system_time(new_time):
         try:
-            new_time = datetime.datetime.strptime(new_time_str, "%Y %m %d %H %M %S")
-            if sys.platform == "win32":
+            if platform.system() == "Windows":
                 TimeSetter.set_system_time_win(new_time)
-            elif sys.platform.startswith("linux"):
+            elif platform.system() == "Linux":
                 TimeSetter.set_system_time_unix(new_time.strftime("%Y-%m-%d %H:%M:%S"))
-            elif sys.platform == "darwin":
+            elif platform.system() == "Darwin":
                 TimeSetter.set_system_time_macos(new_time.strftime("%m%d%H%M%Y.%S"))
             else:
                 messagebox.showerror(f"Platform '{sys.platform}' not supported for setting system time.")

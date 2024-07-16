@@ -1,21 +1,29 @@
 import socketserver
 import datetime
 
-class TCPServer(socketserver.BaseRequestHandler):
-    def __init__(self, time_formatter):
-        self.time_formatter = time_formatter
+class TCPRequestHandler(socketserver.BaseRequestHandler):
+    def __init__(self, request, client_address, server):
+        self.time_formatter = server.time_formatter
+        super().__init__(request, client_address, server)
 
     def handle(self):
-        self.data = self.request.recv(1024).strip()
+        self.data = self.request.recv(30).strip()
+        
+        # Décodez les données reçues
         format_string = self.data.decode('utf-8')
-        try:
-            now = datetime.datetime.now()
-            response = self.time_formatter.format_time(now, format_string)
-        except Exception as e:
-            response = f"Error: {e}"
+        
+        # Formatez l'heure actuelle
+        now = datetime.datetime.now()
+        response = self.time_formatter.format_time(now, format_string)
+        
         self.request.sendall(response.encode('utf-8'))
+
+class TCPServer(socketserver.TCPServer):
+    def __init__(self, server_address, RequestHandlerClass, time_formatter):
+        self.time_formatter = time_formatter
+        super().__init__(server_address, RequestHandlerClass)
 
     @staticmethod
     def start_server(port, time_formatter):
-        server = socketserver.TCPServer(("0.0.0.0", port), lambda *args, **kwargs: TCPServer(time_formatter, *args, **kwargs))
+        server = TCPServer(("0.0.0.0", port), TCPRequestHandler, time_formatter)
         server.serve_forever()

@@ -8,8 +8,11 @@ class NetworkClockApp(tk.Tk):
     def __init__(self, time_formatter):
         super().__init__()
         self.title("Network Clock")
-        self.geometry("300x200")
+        self.geometry("300x250")
         self.time_formatter = time_formatter
+
+        self.label = tk.Label(self, text="Server", font=("Helvetica", 24))
+        self.label.pack(pady=10)
 
         self.format_string = tk.StringVar(value="WWW DD MMM YYYY - HH:mm:SS")
         
@@ -29,13 +32,16 @@ class NetworkClockApp(tk.Tk):
         now = datetime.datetime.now()
         formatted_time = self.time_formatter.format_time(now, self.format_string.get())
         self.label.config(text=formatted_time)
-    
+
     def set_datetime(self):
+        user_input = simpledialog.askstring("Set Date/Time", "Enter new date and time (YYYY MM DD HH mm SS):")
+        
+        if not re.match(r"^\d{4} \d{2} \d{2} \d{2} \d{2} \d{2}", user_input):
+            messagebox.showerror("Error", "Invalid date/time format. Please use YYYY MM DD HH mm SS.")
+            return
+        
         try:
-            new_time = simpledialog.askstring("Set Date/Time", "Enter new date/time (YYYY MM DD HH mm SS):")
-            if new_time:
-                new_time = new_time.strip()
-                TimeSetter.set_system_time(new_time)
-                messagebox.showinfo("Success", "System time updated successfully.")
-        except Exception as e:
-            messagebox.showerror("Error", f"Failed to set system time: {e}")
+            new_time = datetime.datetime.strptime(user_input, "%Y %m %d %H %M %S")
+            TimeSetter.set_system_time(new_time)
+        except ValueError:
+            messagebox.showerror("Error", "Invalid date/time format. Please use YYYY MM DD HH mm SS.")
