@@ -1,8 +1,10 @@
+import subprocess
+import datetime
+import re
+import sys
 import tkinter as tk
 from tkinter import messagebox, simpledialog
-import datetime
 from time_formatter import TimeFormatter
-from time_setter import TimeSetter
 
 class NetworkClockApp(tk.Tk):
     def __init__(self, time_formatter):
@@ -36,12 +38,20 @@ class NetworkClockApp(tk.Tk):
     def set_datetime(self):
         user_input = simpledialog.askstring("Set Date/Time", "Enter new date and time (YYYY MM DD HH mm SS):")
         
-        if not re.match(r"^\d{4} \d{2} \d{2} \d{2} \d{2} \d{2}", user_input):
+        if not re.match(r"^\d{4} \d{2} \d{2} \d{2} \d{2} \d{2}$", user_input):
             messagebox.showerror("Error", "Invalid date/time format. Please use YYYY MM DD HH mm SS.")
             return
         
         try:
             new_time = datetime.datetime.strptime(user_input, "%Y %m %d %H %M %S")
-            TimeSetter.set_system_time(new_time)
+            new_time_str = new_time.strftime("%Y-%m-%d %H:%M:%S")
+            script_file = 'src/time_setter.py'
+            
+            if sys.platform == 'win32':
+                subprocess.run(['runas', '/user:Administrator', 'python', script_file, new_time_str], check=True)
+            elif sys.platform.startswith('linux') or sys.platform == 'darwin':
+                subprocess.run(['sudo', 'python3', script_file, new_time_str], check=True)
+            else:
+                raise NotImplementedError(f"Unsupported platform: {sys.platform}")
         except ValueError:
             messagebox.showerror("Error", "Invalid date/time format. Please use YYYY MM DD HH mm SS.")
