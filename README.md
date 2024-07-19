@@ -2,11 +2,10 @@
 
 ## Description
 
-Ce projet implémente une application Network Clock sécurisée avec SSL, comprenant un serveur et un client.
+This project implements a secure Network Clock application with SSL, consisting of a server and a client.
 
-## Structure du projet
+## Project Structure
 
-```plaintext
 .
 ├── LICENSE
 ├── README.md
@@ -26,90 +25,87 @@ Ce projet implémente une application Network Clock sécurisée avec SSL, compre
 │   ├── reset_time.sh
 │   └── update_requirements.sh
 └── README.md
-```
 
-## Prérequis
+## Prerequisites
 
 - Python 3.x
-- `openssl` pour générer des certificats SSL
+- `openssl` for generating SSL certificates
 
 ## Installation
 
-### Cloner le dépôt :
+### Clone the repository:
 
 ```sh
 git clone https://github.com/sydnec/secured-app
 cd secured-app
 ```
 
-### Générer les certificats SSL :
+### Generate SSL certificates:
 
 ```sh
 openssl req -newkey rsa:2048 -nodes -keyout certs/server.key -x509 -days 365 -out certs/server.crt -subj "/CN=localhost"
 ```
 
-### Installer les dépendances :
+### Install dependencies:
 
-#### Pour le serveur
+#### For the server
 
-1. Naviguer dans le répertoire serveur :
+1. Navigate to the server directory:
 
 ```sh
 cd server
 ```
 
-2. Créer et activer un environnement virtuel (optionnel mais recommandé) :
+2. Create and activate a virtual environment (optional but recommended):
 
 ```sh
 python -m venv venv
 source venv/bin/activate   # Sur Windows : venv\Scripts\activate
 ```
 
-3. Installer les dépendances :
+3. Install dependencies:
 
 ```sh
 pip install -r requirements.txt
 ```
 
-#### Pour le client
-
-1. Naviguer dans le répertoire serveur :
+1. Navigate to the client directory:
 
 ```sh
 cd client
 ```
 
-2. Créer et activer un environnement virtuel (optionnel mais recommandé) :
+2. Create and activate a virtual environment (optional but recommended):
 
 ```sh
 python -m venv venv
 source venv/bin/activate   # Sur Windows : venv\Scripts\activate
 ```
 
-3. Installer les dépendances :
+3. Install dependencies:
 
 ```sh
 pip install -r requirements.txt
 ```
 
-## Utilisation
+## Usage
 
-### Démarrer le serveur
+### Setup
 
 ```sh
-cd server
-python NC.py
+./scripts/setup.sh
 ```
 
-### Démarrer le client
+### Start
 
 ```sh
-cd client
-python Client.py
+./scripts/run.sh
 ```
 
 ### Scripts utilitaires
 
-- scripts/delete_files.sh : Script pour supprimer des fichiers spécifiques.
-- scripts/reset_time.sh : Script pour réinitialiser l'heure système sur macOS.
-- scripts/update_requirements.sh : Script pour mettre à jour requirements.txt avec les dépendances actuelles du projet.
+- scripts/delete_files.sh: Script to delete specific files.
+- scripts/reset_time.sh: Script to reset system time on macOS.
+- scripts/update_requirements.sh: Script to update requirements.txt with the current project dependencies.
+- scripts/run.sh: Script to run the server and the client.
+- scripts/setup.sh: Script to create virtual environnements and intall dependances.

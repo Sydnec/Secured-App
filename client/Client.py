@@ -31,7 +31,7 @@ class NetworkClockClient(tk.Tk):
             sock = socket.create_connection(server_address)
             context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
             context.check_hostname = False  # Désactiver la vérification de l'hôte pour localhost
-            context.load_verify_locations('../certs/server.crt')
+            context.load_verify_locations('./certs/server.crt')
             secure_sock = context.wrap_socket(sock, server_hostname='localhost')
 
             # Envoi de la requête GET_TIME avec le format spécifié

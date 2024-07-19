@@ -8,18 +8,30 @@ import subprocess
 import platform
 import ssl
 import re
+import configparser
 
 class NetworkClock(tk.Tk):
     def __init__(self):
         super().__init__()
+
+        # Initialize the ConfigParser
+        config = configparser.ConfigParser()
+
+        # Read the config.ini file
+        config.read('config.ini')
+
+        # Get the port from the config file
+        self.port = config.getint('server', 'port')
+        
+        self.create_GUI()
+        self.update_display()
+        self.start_server()
+
+    def create_GUI(self):
         self.title("Network Clock")
         self.geometry("300x250")
         self.format_string = tk.StringVar(value="%a %d %b %Y - %H:%M:%S")
-        
-        self.create_widgets()
-        self.start_server()
 
-    def create_widgets(self):
         self.label = tk.Label(self, text="Server", font=("Helvetica", 24))
         self.label.pack(pady=10)
 
@@ -38,9 +50,8 @@ class NetworkClock(tk.Tk):
     def validate_format_string(self, format_string):
         # Autoriser uniquement les caractères de format de date/heure valides
         allowed_chars = re.compile(r'^[%a-zA-Z0-9\s\-\:\./]+$')
-        if allowed_chars.match(format_string):
-            return True
-        return False
+        return bool(allowed_chars.match(format_string))
+
 
     def validate_datetime_string(self, datetime_string):
         try:
@@ -74,25 +85,13 @@ class NetworkClock(tk.Tk):
             messagebox.showerror("Error", "Invalid date format. Use 'YYYY-MM-DD HH:MM:SS'.")
 
     def start_server(self):
-        user_dir = os.path.expanduser('~')
-        config_file_path = os.path.join(user_dir, 'AppData', 'Local', 'Clock', 'port.txt')
-        
-        # Assurez-vous que le chemin existe ou utilisez un chemin différent si nécessaire
-        if not os.path.exists(config_file_path):
-            os.makedirs(os.path.dirname(config_file_path), exist_ok=True)
-            with open(config_file_path, 'w') as file:
-                file.write('12345')  # Utiliser un port par défaut, par exemple 12345
-        
-        with open(config_file_path, 'r') as file:
-            self.port = int(file.read().strip())
-        
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server.bind(('0.0.0.0', self.port))
         self.server.listen(5)
 
         # Configuration SSL
         context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
-        context.load_cert_chain(certfile="../certs/server.crt", keyfile="../certs/server.key")
+        context.load_cert_chain(certfile="./certs/server.crt", keyfile="./certs/server.key")
 
         self.server_thread = threading.Thread(target=self.run_server, args=(context,))
         self.server_thread.daemon = True
@@ -136,6 +135,7 @@ class NetworkClock(tk.Tk):
                     client_socket.send(b"Invalid command.")
             except Exception as e:
                 client_socket.send(f"Error: {e}".encode('utf-8'))
+                break
         client_socket.close()
 
 if __name__ == "__main__":
