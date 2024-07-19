@@ -48,10 +48,9 @@ class NetworkClock(tk.Tk):
         self.set_button.pack(pady=5)
 
     def validate_format_string(self, format_string):
-        # Autoriser uniquement les caractères de format de date/heure valides
+        # Allow only valid date/time format characters
         allowed_chars = re.compile(r'^[%a-zA-Z0-9\s\-\:\./]+$')
         return bool(allowed_chars.match(format_string))
-
 
     def validate_datetime_string(self, datetime_string):
         try:
@@ -72,10 +71,10 @@ class NetworkClock(tk.Tk):
         if self.validate_datetime_string(new_time):
             try:
                 if platform.system() == 'Windows':
-                    # Exécute le script TS.py pour définir l'heure système sur Windows
+                    # Run TS.py script to set system time on Windows
                     subprocess.run(['python', 'TS.py', new_time], check=True)
                 else:
-                    # Utilise la commande 'date' pour définir l'heure sur Unix-like (Linux, macOS)
+                    # Use 'date' command to set time on Unix-like systems
                     formatted_time = datetime.datetime.strptime(new_time, "%Y-%m-%d %H:%M:%S")
                     subprocess.run(['sudo', 'date', formatted_time.strftime('%m%d%H%M%Y.%S')], check=True)
                 messagebox.showinfo("Success", "Time set successfully.")
@@ -89,7 +88,7 @@ class NetworkClock(tk.Tk):
         self.server.bind(('0.0.0.0', self.port))
         self.server.listen(5)
 
-        # Configuration SSL
+        # SSL Configuration
         context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
         context.load_cert_chain(certfile="./certs/server.crt", keyfile="./certs/server.key")
 
