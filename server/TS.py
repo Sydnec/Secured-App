@@ -23,19 +23,31 @@ def set_system_time(new_time_str):
                         ("wSecond", ctypes.c_uint16),
                         ("wMilliseconds", ctypes.c_uint16)]
 
-        system_time = SYSTEMTIME(new_time.year, new_time.month, new_time.day, new_time.weekday(),
-                                 new_time.day, new_time.hour, new_time.minute, new_time.second, 0)
-        # Appeler l'API Windows pour définir l'heure système
+        # Calculate the day of the week for SYSTEMTIME
+        wDayOfWeek = (new_time.weekday() + 1) % 7
+
+        system_time = SYSTEMTIME(new_time.year, new_time.month, new_time.day, wDayOfWeek, new_time.hour, new_time.minute, new_time.second, 0)
+        # Call Windows API to set system time
         result = ctypes.windll.kernel32.SetSystemTime(ctypes.byref(system_time))
         if result == 0:
             raise ctypes.WinError()
         print("System time set successfully.")
     except ValueError:
         print("Invalid date format. Use 'YYYY-MM-DD HH:MM:SS'.")
+    except Exception:
+        print("Failed to set system time due to an unexpected error.")
+
+def enable_DEP():
+    try:
+        # Enable DEP using SetProcessDEPPolicy
+        ctypes.windll.kernel32.SetProcessDEPPolicy(1)
     except Exception as e:
-        print(f"Failed to set system time: {e}")
+        print(f"Failed to enable DEP: {e}")
 
 if __name__ == "__main__":
+    # Enable DEP
+    enable_DEP()
+
     if len(sys.argv) != 2:
         print("Usage: python TS.py 'YYYY-MM-DD HH:MM:SS'")
         sys.exit(1)

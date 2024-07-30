@@ -18,7 +18,6 @@ This project implements a secure Network Clock application with SSL, consisting 
 │   └── requirements.txt
 ├── server
 │   ├── NC.py
-│   ├── TS.py
 │   └── requirements.txt
 ├── scripts
 │   ├── delete_files.sh
@@ -26,6 +25,12 @@ This project implements a secure Network Clock application with SSL, consisting 
 │   └── update_requirements.sh
 └── README.md
 
+
+.APPDATA\NetworkClock
+├── TS.py
+└── config.ini
+
+Please ensure that TS.py and config.ini are correctly positioned.
 ## Prerequisites
 
 - Python 3.x
