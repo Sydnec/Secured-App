@@ -45,6 +45,12 @@ git clone https://github.com/sydnec/secured-app
 cd secured-app
 ```
 
+### Move APPDATA files :
+
+```sh
+mv NetworkClock "$APPDATA/NetworkClock"
+```
+
 ### Generate SSL certificates:
 
 ```sh
