@@ -5,7 +5,7 @@
 This project implements a secure Network Clock application with SSL, consisting of a server and a client.
 
 ## Project Structure
-
+```plaintext
 .
 ├── LICENSE
 ├── README.md
@@ -29,6 +29,7 @@ This project implements a secure Network Clock application with SSL, consisting 
 .APPDATA\NetworkClock
 ├── TS.py
 └── config.ini
+```
 
 Please ensure that TS.py and config.ini are correctly positioned.
 ## Prerequisites
