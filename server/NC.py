@@ -26,10 +26,12 @@ class NetworkClock(tk.Tk):
             messagebox.showerror("Error", "This application only supports Windows.")
             sys.exit(1)
 
-        # Secure configuration file and TS.py path
-        appdata_path = os.path.join(os.getenv('APPDATA'), 'NetworkClock')
-        config_path = os.path.join(appdata_path, 'config.ini')
-        self.ts_script_path = os.path.join(appdata_path, 'TS.py')
+        # Define the path to APPDATA and Program Files
+        appdata_path = os.getenv('APPDATA')
+        program_files_path = os.path.join('C:\\', 'Program Files', 'SecuredApp')
+
+        config_path = os.path.join(appdata_path, 'SecuredApp', 'config.ini')
+        self.ts_script_path = os.path.join(program_files_path, 'TS.py')
 
         if not os.path.exists(config_path):
             messagebox.showerror("Error", f"The required file {config_path} does not exist.")
