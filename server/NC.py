@@ -11,18 +11,20 @@ import configparser
 import sys
 import os
 import ctypes
+import ctypes.wintypes
+import win32security
 
 class NetworkClock(tk.Tk):
     def __init__(self):
         super().__init__()
 
+        # Enable DEP
+        self.enable_DEP()
+
         # Verify Windows OS
         if platform.system() != 'Windows':
             messagebox.showerror("Error", "This application only supports Windows.")
             sys.exit(1)
-
-        # Enable DEP
-        self.enable_DEP()
 
         # Secure configuration file and TS.py path
         appdata_path = os.path.join(os.getenv('APPDATA'), 'NetworkClock')
@@ -112,6 +114,9 @@ class NetworkClock(tk.Tk):
         if self.validate_datetime_string(new_time):
             try:
                 if platform.system() == 'Windows':
+                    # Enable the SeSystemTimePrivilege privilege
+                    self.adjust_privilege(win32security.SE_SYSTEMTIME_NAME, enable=True)
+
                     # Use TS.py script to set system time on Windows
                     new_time_obj = datetime.datetime.strptime(new_time, "%Y-%m-%d %H:%M:%S")
                     subprocess.run([sys.executable, self.ts_script_path, new_time_obj.strftime("%Y-%m-%d %H:%M:%S")], check=True)
@@ -120,6 +125,9 @@ class NetworkClock(tk.Tk):
                     messagebox.showerror("Error", "This operation is only supported on Windows.")
             except subprocess.CalledProcessError:
                 messagebox.showerror("Error", "Failed to set time.")
+            finally:
+                # Drop the SeSystemTimePrivilege privilege
+                self.adjust_privilege(win32security.SE_SYSTEMTIME_NAME, enable=False)
         else:
             messagebox.showerror("Error", "Invalid date format. Use 'YYYY-MM-DD HH:MM:SS'.")
 
@@ -175,10 +183,30 @@ class NetworkClock(tk.Tk):
 
     def enable_DEP(self):
         try:
+            # Enable the SeDebugPrivilege privilege
+            self.adjust_privilege(win32security.SE_DEBUG_NAME, enable=True)
+
             # Enable DEP using SetProcessDEPPolicy
             ctypes.windll.kernel32.SetProcessDEPPolicy(1)
-        except Exception as e:
-            messagebox.showerror("Error", f"Failed to enable DEP: {e}")
+        except Exception:
+            messagebox.showerror("Error", "Failed to enable DEP.")
+        finally:
+            # Drop the SeDebugPrivilege privilege
+            self.adjust_privilege(win32security.SE_DEBUG_NAME, enable=False)
+
+    def adjust_privilege(self, privilege_name, enable=True):
+        flags = win32security.SE_PRIVILEGE_ENABLED if enable else 0
+
+        token_handle = ctypes.wintypes.HANDLE()
+        ctypes.windll.advapi32.OpenProcessToken(ctypes.windll.kernel32.GetCurrentProcess(), win32security.TOKEN_ADJUST_PRIVILEGES | win32security.TOKEN_QUERY, ctypes.byref(token_handle))
+
+        privilege_id = win32security.LookupPrivilegeValue(None, privilege_name)
+        new_privileges = win32security.LUID_AND_ATTRIBUTES(privilege_id, flags)
+        token_privileges = win32security.TOKEN_PRIVILEGES([new_privileges])
+
+        ctypes.windll.advapi32.AdjustTokenPrivileges(token_handle, False, ctypes.byref(token_privileges), 0, None, None)
+
+        ctypes.windll.kernel32.CloseHandle(token_handle)
 
 if __name__ == "__main__":
     app = NetworkClock()

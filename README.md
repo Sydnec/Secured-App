@@ -48,8 +48,11 @@ cd secured-app
 ### Move APPDATA files :
 
 ```sh
-mv NetworkClock "$APPDATA/NetworkClock"
-```
+# Move config.ini to APPDATA
+mv ./NetworkClock/config.ini "$APPDATA\\SecuredApp\\config.ini"
+
+# Move TS.py to Program Files
+mv ./NetworkClock/TS.py "C:\\Program Files\\SecuredApp\\TS.py"```
 
 ### Generate SSL certificates:
 

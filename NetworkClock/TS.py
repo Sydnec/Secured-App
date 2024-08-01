@@ -42,7 +42,7 @@ def enable_DEP():
         # Enable DEP using SetProcessDEPPolicy
         ctypes.windll.kernel32.SetProcessDEPPolicy(1)
     except Exception as e:
-        print(f"Failed to enable DEP: {e}")
+        print(f"Failed to enable DEP.")
 
 if __name__ == "__main__":
     # Enable DEP
